@@ -1,0 +1,16 @@
+acl:
+  - 0.0.0.0/0
+backends:
+  - address: "1.1.1.1:53"
+    protocol: Do53
+    pools:
+      - default
+  - address: "9.9.9.9:53"
+    protocol: Do53
+    pools:
+      - default
+binds:
+  - listen_address: "0.0.0.0:53"
+    reuseport: true
+    protocol: Do53
+    threads: 2

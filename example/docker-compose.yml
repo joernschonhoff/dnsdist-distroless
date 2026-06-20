@@ -1,0 +1,12 @@
+services:
+  dnsdist:
+    image: registry.gitlab.com/joern_schonhoff/dnsdist-distroless:latest
+    volumes:
+      - ./dnsdist.yml:/etc/dnsdist/dnsdist.yml
+    command: ["-C", "/etc/dnsdist/dnsdist.yml", "--supervised"]
+    healthcheck:
+      test: ["CMD", "/usr/bin/dns-healthcheck", "--check-udp", "--check-tcp"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 5s
