@@ -1,0 +1,22 @@
+# Documentation and review notes
+*.md
+AGENTS.md
+REVIEW.md
+
+# Example configs and compose files
+example/
+dnsdist_example.yml
+
+# Credentials and secrets
+*.env
+*.pem
+*.key
+*.crt
+
+# Debug Dockerfile (not needed in production build context)
+Debug.Dockerfile
+
+# CI and local dev tooling
+.gitlab-ci.yml
+.gitlab-ci-local-variables.yml
+ci-local.sh
