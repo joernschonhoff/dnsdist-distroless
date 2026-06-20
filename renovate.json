@@ -1,0 +1,85 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "extends": [
+    "config:recommended"
+  ],
+  "automerge": false,
+  "prConcurrentLimit": 2,
+  "semanticCommits": true,
+  "semanticCommitType": "chore",
+  "semanticCommitScope": "deps",
+  "commitMessageAction": "update",
+  "commitMessageTopic": "{{depName}}",
+  "commitMessageExtra": "to {{newVersion}}",
+  "regexManagers": [
+    {
+      "description": "Extract dnsdist version from VERSION file",
+      "fileMatch": [
+        "^VERSION$"
+      ],
+      "matchStrings": [
+        "^(?<currentValue>\\d+\\.\\d+\\.\\d+)$"
+      ],
+      "datasourceTemplate": "custom.dnsdist-releases",
+      "depNameTemplate": "dnsdist"
+    }
+  ],
+  "customDatasources": {
+    "dnsdist-releases": {
+      "defaultRegistryUrlTemplate": "https://downloads.powerdns.com/releases/",
+      "format": "html",
+      "matchStrings": [
+        "dnsdist-(?<version>\\d+\\.\\d+\\.\\d+)\\.tar\\.xz</a>"
+      ]
+    }
+  },
+  "packageRules": [
+    {
+      "description": "dnsdist version - update VERSION file",
+      "matchFiles": [
+        "VERSION"
+      ],
+      "matchDatasources": [
+        "custom.dnsdist-releases"
+      ],
+      "commitMessageTopic": "dnsdist",
+      "groupName": "dnsdist"
+    },
+    {
+      "description": "quiche library - update .gitlab-ci.yml",
+      "matchFiles": [
+        ".gitlab-ci.yml"
+      ],
+      "matchStrings": [
+        "QUICHE_VERSION: \"(?<currentValue>.*)\""
+      ],
+      "datasourceTemplate": "github-releases",
+      "depNameTemplate": "cloudflare/quiche",
+      "versioningTemplate": "semver",
+      "minimumReleaseAge": "3 days",
+      "commitMessageTopic": "quiche",
+      "groupName": "quiche"
+    },
+    {
+      "description": "crane - update .gitlab-ci.yml",
+      "matchFiles": [
+        ".gitlab-ci.yml"
+      ],
+      "matchStrings": [
+        "CRANE_VERSION: \"(?<currentValue>.*)\""
+      ],
+      "datasourceTemplate": "github-releases",
+      "depNameTemplate": "google/go-containerregistry",
+      "versioningTemplate": "semver",
+      "minimumReleaseAge": "3 days",
+      "commitMessageTopic": "crane",
+      "groupName": "crane"
+    },
+    {
+      "description": "Docker digest-only updates - pin for security without PRs",
+      "matchDatasources": ["docker"],
+      "matchUpdateTypes": ["digest"],
+      "enabled": false
+    }
+  ]
+}
