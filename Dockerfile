@@ -1,33 +1,17 @@
 # Global build args — defined before any FROM so they are available in all stages
+ARG DEBIAN_BASE_IMAGE=debian:13-slim@sha256:b6e2a152f22a40ff69d92cb397223c906017e1391a73c952b588e51af8883bf8
 ARG DISTROLESS_IMAGE=gcr.io/distroless/base-debian13@sha256:f2df8702d4dcc45ce76df6cbc14ad1975fcf88a04bd0e8947b6194264f9ab75e
+ARG QUICHE_IMAGE=registry.gitlab.com/joern_schonhoff/pdns-util-quiche:0.29.3@sha256:6b8b61ed58befcc7291e0e699e8813a583b9557495ad3f07abf7d03679070ea6
+ARG RUST_IMAGE=rust:1.98.0-trixie@sha256:620dbcd124499c59e2406d3741574b5c5838cf9eb9656f0c3a03948f79b02959
 
-# Stage 1: Build Cloudflare quiche (DoQ/DoH3/HTTP3 support)
-# quiche is not packaged in Debian; must be compiled from source.
-FROM rust:1.95-trixie@sha256:0861191076afc8e2dfcf0bec6ad6c2dec8494b3a1e9249729e1989690afed5ec AS quiche-builder
-ARG QUICHE_VERSION
-RUN test -n "${QUICHE_VERSION}" || { echo "QUICHE_VERSION build-arg is required"; exit 1; }
-
-ENV DEBIAN_FRONTEND=noninteractive
-
-RUN apt-get update \
-	&& apt-get install -y --no-install-recommends \
-        cmake \
-        clang-19 \
-        git
-
-RUN git clone --recursive --depth 1 --branch ${QUICHE_VERSION} https://github.com/cloudflare/quiche.git /src
-WORKDIR /src
-
-COPY build_quiche.sh /build_quiche.sh
-RUN chmod +x /build_quiche.sh \
-    && /build_quiche.sh
-
-# Pull distroless base into a named stage so it can be referenced in COPY --from
+# Pull distroless and quiche into named stages so they can be referenced in COPY --from
 # (ARG substitution is not supported in COPY --from, only in FROM)
 FROM ${DISTROLESS_IMAGE} AS distroless
+FROM ${QUICHE_IMAGE} AS quiche
+FROM ${RUST_IMAGE} AS rust
 
-# Stage 2: Compile dnsdist with all DNS-over-* features
-FROM debian:13-slim@sha256:b6e2a152f22a40ff69d92cb397223c906017e1391a73c952b588e51af8883bf8 AS builder
+# Stage 1: Compile dnsdist with all DNS-over-* features
+FROM ${DEBIAN_BASE_IMAGE} AS builder
 ARG DNSDIST_VERSION
 RUN test -n "${DNSDIST_VERSION}" || { echo "DNSDIST_VERSION build-arg is required"; exit 1; }
 
@@ -68,13 +52,13 @@ RUN apt-get update \
 # Official PowerDNS signing keys — keyblock from https://dnsdist.org/_static/dnsdist-keyblock.asc
 COPY dnsdist-keyblock.asc /tmp/dnsdist-keyblock.asc
 
-# Reuse the Rust toolchain built in stage 1 instead of downloading via curl|sh
-COPY --from=quiche-builder /usr/local/cargo /usr/local/cargo
-COPY --from=quiche-builder /usr/local/rustup /usr/local/rustup
+# Reuse the Rust toolchain for building dnsdist with Lua
+COPY --from=rust /usr/local/cargo /usr/local/cargo
+COPY --from=rust /usr/local/rustup /usr/local/rustup
 ENV PATH="/usr/local/cargo/bin:${PATH}" CARGO_HOME="/usr/local/cargo" RUSTUP_HOME="/usr/local/rustup"
 
-# Copy quiche headers, libs, and pkg-config files into the build environment
-COPY --from=quiche-builder /quiche_lib/ /
+# Copy quiche library (DoQ/DoH3/HTTP3 support) from dedicated build image
+COPY --from=quiche /quiche_lib/ /
 
 WORKDIR /src
 
@@ -138,25 +122,23 @@ RUN find /runtime -type f \( -name "*.so" -o -name "*.so.*" \) \
 RUN mkdir -p /runtime/usr/share/terminfo/d \
     && cp /usr/share/terminfo/d/dumb /runtime/usr/share/terminfo/d/dumb
 
-# Stage 3: Minimal distroless runtime — no shell, no package manager
+# Stage 2: Minimal distroless runtime — no shell, no package manager
 FROM ${DISTROLESS_IMAGE} AS runtime
 
 # Re-declare build args needed in this stage (ARGs before FROM are scoped to FROM only)
 ARG DNSDIST_VERSION
 
-LABEL description="dnsdist ${DNSDIST_VERSION} on distroless Debian 13 with DoT/DoH/DoQ/HTTP3/DNSCrypt support"
-LABEL license="MIT"
-LABEL maintainer="Joern Schonhoff"
-LABEL org.opencontainers.image.authors="Joern Schonhoff"
-# LABEL org.opencontainers.image.created="FILLED BY BUILD SYSTEM"
-LABEL org.opencontainers.image.description="dnsdist ${DNSDIST_VERSION} on distroless Debian 13 with DoT/DoH/DoQ/HTTP3/DNSCrypt support"
-LABEL org.opencontainers.image.licenses="MIT"
-# LABEL org.opencontainers.image.revision="FILLED BY BUILD SYSTEM"
-LABEL org.opencontainers.image.source="https://gitlab.com/joern_schonhoff/dnsdist-distroless"
-LABEL org.opencontainers.image.title="dnsdist-distroless"
-LABEL org.opencontainers.image.url="https://gitlab.com/joern_schonhoff/dnsdist-distroless"
-LABEL org.opencontainers.image.version="${DNSDIST_VERSION}"
-LABEL version="${DNSDIST_VERSION}"
+# SPDX identifier required by the OCI image-spec for org.opencontainers.image.licenses
+LABEL \
+      org.opencontainers.image.authors="Joern Schonhoff" \
+      org.opencontainers.image.description="dnsdist ${DNSDIST_VERSION} on distroless Debian 13 with DoT/DoH/DoQ/HTTP3/DNSCrypt support" \
+      org.opencontainers.image.licenses="GPL-2.0-only" \
+      org.opencontainers.image.source="https://gitlab.com/joern_schonhoff/dnsdist-distroless" \
+      org.opencontainers.image.title="dnsdist-distroless" \
+      org.opencontainers.image.url="https://gitlab.com/joern_schonhoff/dnsdist-distroless" \
+      org.opencontainers.image.version="${DNSDIST_VERSION}"
+    #   org.opencontainers.image.created="FILLED BY BUILD SYSTEM"
+    #   org.opencontainers.image.revision="FILLED BY BUILD SYSTEM"
 
 COPY --from=builder /runtime/ /
 COPY --from=registry.gitlab.com/joern_schonhoff/dns-healthcheck:v0.1.0@sha256:93fc019639c0170f2cf00a49acd623009a9cd755a04a8a8527add1464683c144 /dns-healthcheck /usr/bin/dns-healthcheck
