@@ -61,7 +61,7 @@ build:arm64:
       fi
   script:
     - docker pull "${CI_REGISTRY_IMAGE}:${TARGET_ARCH}-${CI_COMMIT_SHA}"
-    - docker run --rm --entrypoint /usr/sbin/dnsdist "${CI_REGISTRY_IMAGE}:${TARGET_ARCH}-${CI_COMMIT_SHA}" --version
+    - docker run --rm --entrypoint /usr/bin/dnsdist "${CI_REGISTRY_IMAGE}:${TARGET_ARCH}-${CI_COMMIT_SHA}" --version
     # TODO :: Write actual tests for dnsdist and not just check the version output
 
 test:amd64:
