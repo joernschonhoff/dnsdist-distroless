@@ -46,34 +46,16 @@
       "groupName": "dnsdist"
     },
     {
-      "description": "quiche library - update .gitlab-ci.yml",
+      "description": "quiche pre-built image - update via Dockerfile QUICHE_IMAGE arg (docker datasource, built-in dockerfile manager)",
       "matchFiles": [
-        ".gitlab-ci.yml"
+        "Dockerfile"
       ],
-      "matchStrings": [
-        "QUICHE_VERSION: \"(?<currentValue>.*)\""
+      "matchPackageNames": [
+        "registry.gitlab.com/joern_schonhoff/pdns-util-quiche"
       ],
-      "datasourceTemplate": "github-releases",
-      "depNameTemplate": "cloudflare/quiche",
-      "versioningTemplate": "semver",
       "minimumReleaseAge": "3 days",
       "commitMessageTopic": "quiche",
       "groupName": "quiche"
-    },
-    {
-      "description": "crane - update .gitlab-ci.yml",
-      "matchFiles": [
-        ".gitlab-ci.yml"
-      ],
-      "matchStrings": [
-        "CRANE_VERSION: \"(?<currentValue>.*)\""
-      ],
-      "datasourceTemplate": "github-releases",
-      "depNameTemplate": "google/go-containerregistry",
-      "versioningTemplate": "semver",
-      "minimumReleaseAge": "3 days",
-      "commitMessageTopic": "crane",
-      "groupName": "crane"
     },
     {
       "description": "Docker digest-only updates - pin for security without PRs",
