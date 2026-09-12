@@ -2,7 +2,7 @@
 ARG DEBIAN_BASE_IMAGE=debian:13-slim@sha256:b6e2a152f22a40ff69d92cb397223c906017e1391a73c952b588e51af8883bf8
 ARG DISTROLESS_IMAGE=gcr.io/distroless/base-debian13@sha256:f2df8702d4dcc45ce76df6cbc14ad1975fcf88a04bd0e8947b6194264f9ab75e
 ARG QUICHE_IMAGE=registry.gitlab.com/joern_schonhoff/pdns-util-quiche:0.29.3@sha256:6b8b61ed58befcc7291e0e699e8813a583b9557495ad3f07abf7d03679070ea6
-ARG RUST_IMAGE=rust:1.98.0-trixie@sha256:620dbcd124499c59e2406d3741574b5c5838cf9eb9656f0c3a03948f79b02959
+ARG RUST_IMAGE=rust:1.98.1-trixie@sha256:462a9af3c54fb4718850d3c602fc0e54452c20b1c12a4e4080fdb001d4b9acbf
 
 # Pull distroless and quiche into named stages so they can be referenced in COPY --from
 # (ARG substitution is not supported in COPY --from, only in FROM)
@@ -141,7 +141,7 @@ LABEL \
     #   org.opencontainers.image.revision="FILLED BY BUILD SYSTEM"
 
 COPY --from=builder /runtime/ /
-COPY --from=registry.gitlab.com/joern_schonhoff/dns-healthcheck:v0.1.0@sha256:93fc019639c0170f2cf00a49acd623009a9cd755a04a8a8527add1464683c144 /dns-healthcheck /usr/bin/dns-healthcheck
+COPY --from=registry.gitlab.com/joern_schonhoff/dns-healthcheck:v0.1.2@sha256:419dc6042673a0a9d0893b56821983dd656649603a3fe0175ab168ae6f04d77f /dns-healthcheck /usr/bin/dns-healthcheck
 
 ENV TERM=dumb
 
