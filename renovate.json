@@ -5,17 +5,18 @@
   ],
   "automerge": false,
   "prConcurrentLimit": 2,
-  "semanticCommits": true,
+  "semanticCommits": "enabled",
   "semanticCommitType": "chore",
   "semanticCommitScope": "deps",
   "commitMessageAction": "update",
   "commitMessageTopic": "{{depName}}",
   "commitMessageExtra": "to {{newVersion}}",
-  "regexManagers": [
+  "customManagers": [
     {
+      "customType": "regex",
       "description": "Extract dnsdist version from VERSION file",
-      "fileMatch": [
-        "^VERSION$"
+      "managerFilePatterns": [
+        "/^VERSION$/"
       ],
       "matchStrings": [
         "^(?<currentValue>\\d+\\.\\d+\\.\\d+)$"
@@ -27,33 +28,30 @@
   "customDatasources": {
     "dnsdist-releases": {
       "defaultRegistryUrlTemplate": "https://downloads.powerdns.com/releases/",
-      "format": "html",
-      "matchStrings": [
-        "dnsdist-(?<version>\\d+\\.\\d+\\.\\d+)\\.tar\\.xz</a>"
-      ]
+      "format": "html"
     }
   },
   "packageRules": [
     {
       "description": "dnsdist version - update VERSION file",
-      "matchFiles": [
+      "matchFileNames": [
         "VERSION"
       ],
       "matchDatasources": [
         "custom.dnsdist-releases"
       ],
+      "extractVersion": "^dnsdist-(?<version>\\d+\\.\\d+\\.\\d+)\\.tar\\.xz$",
       "commitMessageTopic": "dnsdist",
       "groupName": "dnsdist"
     },
     {
       "description": "quiche pre-built image - update via Dockerfile QUICHE_IMAGE arg (docker datasource, built-in dockerfile manager)",
-      "matchFiles": [
+      "matchFileNames": [
         "Dockerfile"
       ],
       "matchPackageNames": [
         "registry.gitlab.com/joern_schonhoff/pdns-util-quiche"
       ],
-      "minimumReleaseAge": "3 days",
       "commitMessageTopic": "quiche",
       "groupName": "quiche"
     },
