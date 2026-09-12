@@ -1,0 +1,67 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "extends": [
+    "config:recommended"
+  ],
+  "automerge": false,
+  "prConcurrentLimit": 2,
+  "semanticCommits": true,
+  "semanticCommitType": "chore",
+  "semanticCommitScope": "deps",
+  "commitMessageAction": "update",
+  "commitMessageTopic": "{{depName}}",
+  "commitMessageExtra": "to {{newVersion}}",
+  "regexManagers": [
+    {
+      "description": "Extract dnsdist version from VERSION file",
+      "fileMatch": [
+        "^VERSION$"
+      ],
+      "matchStrings": [
+        "^(?<currentValue>\\d+\\.\\d+\\.\\d+)$"
+      ],
+      "datasourceTemplate": "custom.dnsdist-releases",
+      "depNameTemplate": "dnsdist"
+    }
+  ],
+  "customDatasources": {
+    "dnsdist-releases": {
+      "defaultRegistryUrlTemplate": "https://downloads.powerdns.com/releases/",
+      "format": "html",
+      "matchStrings": [
+        "dnsdist-(?<version>\\d+\\.\\d+\\.\\d+)\\.tar\\.xz</a>"
+      ]
+    }
+  },
+  "packageRules": [
+    {
+      "description": "dnsdist version - update VERSION file",
+      "matchFiles": [
+        "VERSION"
+      ],
+      "matchDatasources": [
+        "custom.dnsdist-releases"
+      ],
+      "commitMessageTopic": "dnsdist",
+      "groupName": "dnsdist"
+    },
+    {
+      "description": "quiche pre-built image - update via Dockerfile QUICHE_IMAGE arg (docker datasource, built-in dockerfile manager)",
+      "matchFiles": [
+        "Dockerfile"
+      ],
+      "matchPackageNames": [
+        "registry.gitlab.com/joern_schonhoff/pdns-util-quiche"
+      ],
+      "minimumReleaseAge": "3 days",
+      "commitMessageTopic": "quiche",
+      "groupName": "quiche"
+    },
+    {
+      "description": "Docker digest-only updates - pin for security without PRs",
+      "matchDatasources": ["docker"],
+      "matchUpdateTypes": ["digest"],
+      "enabled": false
+    }
+  ]
+}
