@@ -141,7 +141,7 @@ LABEL \
     #   org.opencontainers.image.revision="FILLED BY BUILD SYSTEM"
 
 COPY --from=builder /runtime/ /
-COPY --from=registry.gitlab.com/joern_schonhoff/dns-healthcheck:v0.1.0@sha256:93fc019639c0170f2cf00a49acd623009a9cd755a04a8a8527add1464683c144 /dns-healthcheck /usr/bin/dns-healthcheck
+COPY --from=registry.gitlab.com/joern_schonhoff/dns-healthcheck:v0.1.2@sha256:419dc6042673a0a9d0893b56821983dd656649603a3fe0175ab168ae6f04d77f /dns-healthcheck /usr/bin/dns-healthcheck
 
 ENV TERM=dumb
 
