@@ -8,9 +8,9 @@ stages:
 
 .build-template:
   stage: build
-  image: docker:29.8@sha256:5efed980cba3fc126cf54e21a5a6ff8849d05b6e0623d6e7612f48e9cd6cd17e
+  image: docker:29.8.1@sha256:1f029db43a32fbb1465fe8ff4327d405154876946986170e97d7861232a8227a
   services:
-    - docker:29.8-dind@sha256:5efed980cba3fc126cf54e21a5a6ff8849d05b6e0623d6e7612f48e9cd6cd17e
+    - docker:29.8.1-dind@sha256:1f029db43a32fbb1465fe8ff4327d405154876946986170e97d7861232a8227a
   before_script:
     # Auth to pull private base images referenced in the Dockerfile
     # (pdns-util-quiche, dns-healthcheck) from the same registry host.
@@ -53,9 +53,9 @@ build:arm64:
 
 .test-template:
   stage: test
-  image: docker:29.8@sha256:5efed980cba3fc126cf54e21a5a6ff8849d05b6e0623d6e7612f48e9cd6cd17e
+  image: docker:29.8.1@sha256:1f029db43a32fbb1465fe8ff4327d405154876946986170e97d7861232a8227a
   services:
-    - docker:29.8-dind@sha256:5efed980cba3fc126cf54e21a5a6ff8849d05b6e0623d6e7612f48e9cd6cd17e
+    - docker:29.8.1-dind@sha256:1f029db43a32fbb1465fe8ff4327d405154876946986170e97d7861232a8227a
   before_script:
     - |
       if [ -n "$CI_REGISTRY_PASSWORD" ]; then
@@ -88,9 +88,9 @@ test:arm64:
 
 publish:
   stage: publish
-  image: docker:29.8@sha256:5efed980cba3fc126cf54e21a5a6ff8849d05b6e0623d6e7612f48e9cd6cd17e
+  image: docker:29.8.1@sha256:1f029db43a32fbb1465fe8ff4327d405154876946986170e97d7861232a8227a
   services:
-    - docker:29.8-dind@sha256:5efed980cba3fc126cf54e21a5a6ff8849d05b6e0623d6e7612f48e9cd6cd17e
+    - docker:29.8.1-dind@sha256:1f029db43a32fbb1465fe8ff4327d405154876946986170e97d7861232a8227a
   rules:
     - if: '$CI_COMMIT_TAG'
   needs:
