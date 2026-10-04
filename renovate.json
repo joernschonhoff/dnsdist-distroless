@@ -3,6 +3,7 @@
   "extends": [
     "config:recommended"
   ],
+  "pinDigests": true,
   "automerge": false,
   "prConcurrentLimit": 2,
   "semanticCommits": "enabled",
@@ -33,6 +34,10 @@
   },
   "packageRules": [
     {
+      "matchUpdateTypes": ["minor", "patch", "pin"],
+      "automerge": true
+    },
+    {
       "description": "dnsdist version - update VERSION file",
       "matchFileNames": [
         "VERSION"
@@ -56,7 +61,7 @@
       "groupName": "quiche"
     },
     {
-      "description": "Docker digest-only updates - pin for security without PRs",
+      "description": "Disable automatic updates for Docker image digests",
       "matchDatasources": ["docker"],
       "matchUpdateTypes": ["digest"],
       "enabled": false
