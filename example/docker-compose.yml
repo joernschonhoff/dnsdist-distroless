@@ -1,6 +1,6 @@
 services:
   dnsdist:
-    image: registry.gitlab.com/joern_schonhoff/dnsdist-distroless:latest
+    image: registry.gitlab.com/joern_schonhoff/dnsdist-distroless:latest@sha256:26b1a588f21e102f766ebce43d6f284a34f3d4e70451490391fe15e3ee3c8ccb
     volumes:
       - ./dnsdist.yml:/etc/dnsdist/dnsdist.yml
     command: ["-C", "/etc/dnsdist/dnsdist.yml", "--supervised"]
