@@ -24,6 +24,18 @@
       ],
       "datasourceTemplate": "custom.dnsdist-releases",
       "depNameTemplate": "dnsdist"
+    },
+    {
+      "customType": "regex",
+      "description": "Extract regctl version from .gitlab-ci.yml",
+      "managerFilePatterns": [
+        "/^\\.gitlab-ci\\.yml$/"
+      ],
+      "matchStrings": [
+        "REGCTL_VERSION: (?<currentValue>v\\d+\\.\\d+\\.\\d+)"
+      ],
+      "datasourceTemplate": "github-releases",
+      "depNameTemplate": "regclient/regclient"
     }
   ],
   "customDatasources": {
@@ -57,8 +69,17 @@
       "matchPackageNames": [
         "registry.gitlab.com/joern_schonhoff/pdns-util-quiche"
       ],
-      "commitMessageTopic": "quiche",
-      "groupName": "quiche"
+      "commitMessageTopic": "quiche"
+    },
+    {
+      "description": "regctl version - update REGCTL_VERSION in .gitlab-ci.yml",
+      "matchFileNames": [
+        ".gitlab-ci.yml"
+      ],
+      "matchDepNames": [
+        "regclient/regclient"
+      ],
+      "commitMessageTopic": "regctl"
     },
     {
       "description": "Disable automatic updates for Docker image digests",
