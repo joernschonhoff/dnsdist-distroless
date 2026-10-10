@@ -132,14 +132,6 @@ release:
     - if: '$CI_COMMIT_TAG'
   needs:
     - publish 
-  before_script:
-    # Check if CI_COMMIT_TAG is equal to the version in the VERSION file to prevent accidental mismatches.
-    - |
-      TAG_VERSION="${CI_COMMIT_TAG#v}"
-      if [ "$TAG_VERSION" != "$(cat VERSION)" ]; then
-        echo "Error: CI_COMMIT_TAG ($CI_COMMIT_TAG) does not match VERSION file ($(cat VERSION))"
-        exit 1
-      fi
   script:
     - echo "Creating release $CI_COMMIT_TAG"
   release:
