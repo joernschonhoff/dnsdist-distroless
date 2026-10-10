@@ -90,8 +90,10 @@ test:arm64:
 delete_image:
   stage: cleanup
   needs:
-    - test:amd64
-    - test:arm64
+    - job: build:amd64
+      optional: true
+    - job: build:arm64
+      optional: true
   variables:
     REGCTL_VERSION: v0.11.6
   rules:
