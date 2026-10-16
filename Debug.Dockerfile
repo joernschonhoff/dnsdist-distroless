@@ -2,7 +2,7 @@
 ARG DEBIAN_BASE_IMAGE=debian:13-slim@sha256:b6e2a152f22a40ff69d92cb397223c906017e1391a73c952b588e51af8883bf8
 ARG DNS_HEALTHCHECK_IMAGE=registry.gitlab.com/joern_schonhoff/dns-healthcheck:v0.1.4@sha256:3192781815e5693f9c2e01238341cdc8330babf716d55f71324585c935d15431
 ARG QUICHE_IMAGE=registry.gitlab.com/joern_schonhoff/pdns-util-quiche:0.30.0@sha256:ae473cd647ffd96e2370cb87e44debd4457051409ef01adf45e20c207de41db6
-ARG RUST_IMAGE=rust:1.99.0-trixie@sha256:3745c050d12adc738eff16ebfc81ed044bfb2cc27c6828850ff1666beb1c7a49
+ARG RUST_IMAGE=rust:1.99.1-trixie@sha256:978a8273126083aac53ec6948f475daf4a8a33ae9b42e6c0678f534a9745cc30
 
 # Pull debian, quiche and rust into named stages so they can be referenced in COPY --from
 # (ARG substitution is not supported in COPY --from, only in FROM)
