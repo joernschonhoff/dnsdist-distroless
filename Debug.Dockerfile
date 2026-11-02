@@ -1,6 +1,6 @@
 # Global build args — defined before any FROM so they are available in all stages
 ARG DEBIAN_BASE_IMAGE=debian:13-slim@sha256:b6e2a152f22a40ff69d92cb397223c906017e1391a73c952b588e51af8883bf8
-ARG DNS_HEALTHCHECK_IMAGE=registry.gitlab.com/joern_schonhoff/dns-healthcheck:v0.1.6@sha256:7c0e312b18f9c00a0a21e69b8dccb7fb91a1aa118fd1ec253375733d5e345da5
+ARG DNS_HEALTHCHECK_IMAGE=registry.gitlab.com/joern_schonhoff/dns-healthcheck:v0.1.7@sha256:93591b6b22a14d224c9697c8282c2bb3346a0303c63fc10c55466f31e576298d
 ARG QUICHE_IMAGE=registry.gitlab.com/joern_schonhoff/pdns-util-quiche:0.30.0@sha256:ae473cd647ffd96e2370cb87e44debd4457051409ef01adf45e20c207de41db6
 ARG RUST_IMAGE=rust:1.99.1-trixie@sha256:978a8273126083aac53ec6948f475daf4a8a33ae9b42e6c0678f534a9745cc30
 
