@@ -3,7 +3,7 @@ ARG DEBIAN_BASE_IMAGE=debian:13-slim@sha256:b6e2a152f22a40ff69d92cb397223c906017
 ARG DISTROLESS_IMAGE=gcr.io/distroless/base-debian13@sha256:f2df8702d4dcc45ce76df6cbc14ad1975fcf88a04bd0e8947b6194264f9ab75e
 ARG DNS_HEALTHCHECK_IMAGE=registry.gitlab.com/joern_schonhoff/dns-healthcheck:v0.1.9@sha256:712c3b3bd0b9667b160f136dee4d675688c830c4942a5771fd8e0b7b6ebde0f8
 ARG QUICHE_IMAGE=registry.gitlab.com/joern_schonhoff/pdns-util-quiche:0.30.0@sha256:ae473cd647ffd96e2370cb87e44debd4457051409ef01adf45e20c207de41db6
-ARG RUST_IMAGE=rust:1.99.1-trixie@sha256:978a8273126083aac53ec6948f475daf4a8a33ae9b42e6c0678f534a9745cc30
+ARG RUST_IMAGE=rust:1.100.0-trixie@sha256:e19840879045c951c905d0eaa9887f3439c62000e429963371b376bac8d38c31
 
 # Pull distroless and quiche into named stages so they can be referenced in COPY --from
 # (ARG substitution is not supported in COPY --from, only in FROM)
